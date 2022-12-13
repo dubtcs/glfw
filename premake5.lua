@@ -3,8 +3,8 @@ project "GLFW"
     kind "StaticLib"
     language "C"
 
-    targetdir("bin/"..output"/%{proj.name}")
-    objdir("bin-int/"..output"/%{proj.name}")
+    targetdir("bin/"..output.."/%{prj.name}")
+    objdir("bin-int/"..output.."/%{prj.name}")
 
     files {
         "include/GLFW/glfw3.h",
@@ -18,7 +18,7 @@ project "GLFW"
 
     filter "system:windows"
         systemversion "latest"
-        saticruntime "On"
+        staticruntime "On"
 
         files {
             "src/win32_init.c",
@@ -32,5 +32,10 @@ project "GLFW"
 			"src/egl_context.c",
 			"src/osmesa_context.c"
         }
+
+		defines { 
+			"_GLFW_WIN32",
+			"_CRT_SECURE_NO_WARNINGS"
+		}
 
         --buildoptions "/MT"
