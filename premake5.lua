@@ -1,27 +1,61 @@
 
 project "GLFW"
-    kind "StaticLib"
-    language "C"
+	kind "StaticLib"
+	language "C"
+	staticruntime "on"
 
-    targetdir("bin/"..output.."/%{prj.name}")
-    objdir("bin-int/"..output.."/%{prj.name}")
+	targetdir ("bin/" .. output .. "/%{prj.name}")
+	objdir ("bin-int/" .. output .. "/%{prj.name}")
 
-    files {
-        "include/GLFW/glfw3.h",
+	files
+	{
+		"include/GLFW/glfw3.h",
 		"include/GLFW/glfw3native.h",
 		"src/glfw_config.h",
 		"src/context.c",
 		"src/init.c",
 		"src/input.c",
 		"src/monitor.c",
-    }
 
-    filter "system:windows"
-        systemversion "latest"
-        staticruntime "On"
+		"src/null_init.c",
+		"src/null_joystick.c",
+		"src/null_monitor.c",
+		"src/null_window.c",
 
-        files {
-            "src/win32_init.c",
+		"src/platform.c",
+		"src/vulkan.c",
+		"src/window.c",
+	}
+
+	filter "system:linux"
+		pic "On"
+		systemversion "latest"
+		
+		files
+		{
+			"src/x11_init.c",
+			"src/x11_monitor.c",
+			"src/x11_window.c",
+			"src/xkb_unicode.c",
+			"src/posix_time.c",
+			"src/posix_thread.c",
+			"src/glx_context.c",
+			"src/egl_context.c",
+			"src/osmesa_context.c",
+			"src/linux_joystick.c"
+		}
+
+		defines
+		{
+			"_GLFW_X11"
+		}
+
+	filter "system:windows"
+		systemversion "latest"
+
+		files
+		{
+			"src/win32_init.c",
 			"src/win32_joystick.c",
 			"src/win32_module.c",
 			"src/win32_monitor.c",
@@ -31,11 +65,25 @@ project "GLFW"
 			"src/wgl_context.c",
 			"src/egl_context.c",
 			"src/osmesa_context.c"
-        }
+		}
 
-		defines { 
+		defines 
+		{ 
 			"_GLFW_WIN32",
 			"_CRT_SECURE_NO_WARNINGS"
 		}
 
-        --buildoptions "/MT"
+		links
+		{
+			"Dwmapi.lib"
+		}
+
+		-- buildoptions "/MT"
+
+	filter "configurations:Debug"
+		runtime "Debug"
+		symbols "on"
+
+	filter "configurations:Release"
+		runtime "Release"
+		optimize "on"
